@@ -1,19 +1,15 @@
 import React from "react";
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Button, buttonVariants } from "@/components/ui/button";
-
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { LoginInDialog } from "./loginInDialog";
+
 import { cn } from "@/lib/utils";
 const navItemStyle = "px-3 py-1.5 rounded-md hover:bg-[var(--accent)]";
 
@@ -49,10 +45,7 @@ export function Navbar() {
             className="object-contain"
           />
         </div>
-
-        <Button asChild className={navItemStyle}>
-          <Link href="#">Login</Link>
-        </Button>
+        <LoginInDialog />
       </div>
     </div>
   );
