@@ -54,7 +54,10 @@ export function LoginInDialog() {
           <Button type="submit">Submit</Button>
           <p className="text-sm text-muted-foreground">
             Not a member?{" "}
-            <Link href="#" className="underline hover:text-blue-500">
+            <Link
+              href="#"
+              className="underline hover:font-bold hover:text-blue-500"
+            >
               Sign up now.
             </Link>
           </p>
