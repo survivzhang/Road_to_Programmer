@@ -45,8 +45,27 @@ export function ProfileForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    // 这里可以进行表单提交的逻辑
+    try {
+      const response = await fetch("http://localhost:5225/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log("User created successfully:", result);
+        alert("User created successfully");
+      } else {
+        alert("Failed to create user");
+      }
+    } catch (error) {
+      console.error("Error creating user:", error);
+      alert("Error creating user");
+    }
   }
 
   return (
