@@ -3,5 +3,9 @@
 import { ProfileForm } from "@/components/registrationform";
 
 export default function Registration() {
-  return <ProfileForm />;
+  return (
+    <div className="flex p-4 justify-left ml-5">
+      <ProfileForm />
+    </div>
+  );
 }

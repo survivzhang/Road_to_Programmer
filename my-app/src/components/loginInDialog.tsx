@@ -11,12 +11,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { useState } from "react";
 
 export function LoginInDialog() {
+  const [isOpen, setIsOpen] = useState(false);
+  const handleSubmit = () => {
+    setIsOpen(false);
+  };
+  const handleOpenInNewTab = () => {
+    setIsOpen(false);
+  };
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Login</Button>
+        <Button onClick={() => setIsOpen(true)}>Login</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="items-center text-center">
@@ -52,12 +60,16 @@ export function LoginInDialog() {
         </div>
 
         <div className="flex flex-col items-center gap-4">
-          <Button type="submit">Submit</Button>
+          <Button type="submit" onClick={handleSubmit}>
+            Submit
+          </Button>
           <p className="text-sm text-muted-foreground">
             Not a member?{" "}
             <Link
-              href="#"
+              href={"/registration"}
+              target="_blank" // Open in new tab
               className="underline hover:font-bold hover:text-blue-500"
+              onClick={handleOpenInNewTab} // Open in new tab
             >
               Sign up now.
             </Link>
