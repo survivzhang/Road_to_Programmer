@@ -43,4 +43,15 @@ app.MapPost("/user", async (User user, RtpContext db) =>
     return Results.Ok(user);
 });
 
+app.MapPost("/login", async (User LoginData, RtpContext db) =>
+{
+    var existingUser = await db.Users.FirstOrDefaultAsync(u => u.Email == LoginData.Email);
+    if (existingUser == null || existingUser.Password != LoginData.Password)
+    {
+        return Results.Unauthorized();
+    }
+
+    return Results.Ok("Login successful!");
+
+});
 app.Run();

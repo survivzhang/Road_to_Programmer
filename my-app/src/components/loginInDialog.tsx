@@ -15,14 +15,70 @@ import { useState } from "react";
 
 export function LoginInDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const handleSubmit = () => {
-    setIsOpen(false);
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const handleOpenInNewTab = () => {
     setIsOpen(false);
   };
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:5225/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        // Handle successful login
+        console.log("Login successful");
+        alert("Login successful");
+        setIsOpen(false);
+      } else if (response.status === 401) {
+        // Handle error response
+        console.error("Login failed");
+        setError("Invalid email or password");
+      } else {
+        // Handle other error responses
+        console.error("Login failed");
+        setError("Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setError("An error occurred. Please try again later.");
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(state) => {
+        setIsOpen(state);
+        if (!state) {
+          setEmail("");
+          setPassword("");
+          setError(""); // clear error
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button onClick={() => setIsOpen(true)}>Login</Button>
       </DialogTrigger>
@@ -44,6 +100,8 @@ export function LoginInDialog() {
               id="Email"
               placeholder="xxx@xxx.com"
               className="col-span-3"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -55,10 +113,12 @@ export function LoginInDialog() {
               type="password"
               placeholder="xxxxxxxx"
               className="col-span-3"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
         </div>
-
+        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
         <div className="flex flex-col items-center gap-4">
           <Button type="submit" onClick={handleSubmit}>
             Submit
