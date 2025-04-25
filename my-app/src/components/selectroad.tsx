@@ -25,11 +25,9 @@ import {
 } from "@/components/ui/select";
 
 const FormSchema = z.object({
-  email: z
-    .string({
-      required_error: "Please select an email to display.",
-    })
-    .email(),
+  roadmap: z.string({
+    required_error: "Please select an roadmap to display.",
+  }),
 });
 
 export function SelectRoad() {
@@ -53,31 +51,36 @@ export function SelectRoad() {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="roadmap"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Choose your roadmap</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a verified email to display" />
+                    <SelectValue placeholder="Select a roadmap to explore" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="m@example.com">m@example.com</SelectItem>
-                  <SelectItem value="m@google.com">m@google.com</SelectItem>
-                  <SelectItem value="m@support.com">m@support.com</SelectItem>
+                <SelectContent className="max-h-[300px] overflow-y-auto">
+                  <SelectItem value="frontend">Frontend Developer</SelectItem>
+                  <SelectItem value="backend">Backend Developer</SelectItem>
+                  <SelectItem value="ai-engineer">AI Engineer</SelectItem>
+                  <SelectItem value="cyber-security">Cyber Security</SelectItem>
+                  <SelectItem value="data-analyst">Data Analyst</SelectItem>
+                  <SelectItem value="full-stack">
+                    Full Stack Engineer
+                  </SelectItem>
                 </SelectContent>
               </Select>
               <FormDescription>
-                You can manage email addresses in your{" "}
-                <Link href="/examples/forms">email settings</Link>.
+                You can customize your learning in your{" "}
+                <Link href="/roadmap">dashboard</Link>.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Generate Roadmap</Button>
       </form>
     </Form>
   );
