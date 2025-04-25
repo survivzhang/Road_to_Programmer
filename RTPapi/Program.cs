@@ -54,4 +54,16 @@ app.MapPost("/login", async (User LoginData, RtpContext db) =>
     return Results.Ok("Login successful!");
 
 });
+
+app.MapGet("/roadmap/{name}", async (string name) =>
+{
+    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "roadmap", $"{name}.json");
+        if (!System.IO.File.Exists(filePath))
+    {
+        return Results.NotFound($"Roadmap file {name}.json not found.");
+    }
+
+    var content = await System.IO.File.ReadAllTextAsync(filePath);
+    return Results.Content(content, "application/json");
+});
 app.Run();

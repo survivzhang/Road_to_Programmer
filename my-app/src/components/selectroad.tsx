@@ -4,6 +4,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -31,17 +32,16 @@ const FormSchema = z.object({
 });
 
 export function SelectRoad() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast(
-      <div>
-        <strong>You submitted:</strong>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      </div>
-    );
+    const selected = data.roadmap;
+
+    toast.success(`Redirecting to ${selected} roadmap...`);
+    router.push(`/roadmap/${selected}`);
   }
   return (
     <Form {...form}>
