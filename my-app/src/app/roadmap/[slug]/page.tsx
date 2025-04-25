@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { RoadmapCard } from "@/components/roadmap-card";
 
 interface RoadmapNode {
   label: string;
@@ -39,16 +40,12 @@ export default async function RoadmapPage({
             <h2 className="text-2xl font-semibold mb-4">Stage {stage}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {items.map((node, index) => (
-                <a
+                <RoadmapCard
                   key={index}
-                  href={node.url || undefined}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block bg-white shadow-md rounded-xl p-4 border border-gray-200 hover:shadow-lg transition"
-                >
-                  <h3 className="text-lg font-semibold mb-1">{node.label}</h3>
-                  <p className="text-sm text-gray-600">{node.description}</p>
-                </a>
+                  label={node.label}
+                  description={node.description}
+                  url={node.url}
+                />
               ))}
             </div>
           </div>

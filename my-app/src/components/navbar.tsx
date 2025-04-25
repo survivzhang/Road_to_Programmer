@@ -20,17 +20,17 @@ export function Navbar() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navItemStyle}>
-              <Link href="#">RoadMap</Link>
+              <Link href="/">Homepage</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navItemStyle}>
-              <Link href="#">Skills</Link>
+              <Link href="#">AI Advice</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navItemStyle}>
-              <Link href="#">JobMarket</Link>
+              <Link href="#">Plan</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
