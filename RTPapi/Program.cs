@@ -1,5 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using RTPapi;
+using Microsoft.AspNetCore.Authentication.JwtBearer; //  To use JWT Authentication
+using Microsoft.IdentityModel.Tokens; //  To validate JWT signature
+using System.Text; //  To handle secret key encoding
+using System.IdentityModel.Tokens.Jwt; //  To generate JWT tokens
+using System.Security.Claims; //  To store user identity in JWT
+
+var key = "RoadToProgramming"; //  Secret key for JWT token generation and validation
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -8,6 +15,22 @@ builder.Services.AddDbContext<RtpContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.AddCors();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+    };
+});
 var app = builder.Build();
 app.UseCors(policy =>
     policy.AllowAnyOrigin()
@@ -16,6 +39,8 @@ app.UseCors(policy =>
 
 // 添加 PostgreSQL 数据库上下文服务
 
+app.UseAuthentication(); // 🛡️ Validate incoming JWT tokens
+app.UseAuthorization();  // 🛡️ Enforce [Authorize] rules on APIs
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -24,11 +49,6 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
 app.MapGet("/user", async (RtpContext db) =>
 {
@@ -51,9 +71,24 @@ app.MapPost("/login", async (User LoginData, RtpContext db) =>
         return Results.Unauthorized();
     }
 
-    return Results.Ok("Login successful!");
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var tokenKey = Encoding.UTF8.GetBytes(key);
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+        Subject = new ClaimsIdentity(new Claim[]
+        {
+            new Claim(ClaimTypes.Name, existingUser.Email)
+        }),
+        Expires = DateTime.UtcNow.AddHours(1),
+        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
+    };
 
+    var token = tokenHandler.CreateToken(tokenDescriptor);
+    var tokenString = tokenHandler.WriteToken(token);
+
+    return Results.Ok(new { token = tokenString });
 });
+
 
 app.MapGet("/roadmap/{name}", async (string name) =>
 {
