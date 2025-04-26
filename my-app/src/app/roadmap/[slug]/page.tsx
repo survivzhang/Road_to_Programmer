@@ -1,6 +1,11 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { notFound, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { RoadmapCard } from "@/components/roadmap-card";
 import ProtectedPage from "@/components/protectedPage";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
+
 interface RoadmapNode {
   label: string;
   description: string;
@@ -8,22 +13,42 @@ interface RoadmapNode {
   stage: number;
 }
 
-export default async function RoadmapPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+interface RoadmapData {
+  title: string;
+  nodes: RoadmapNode[];
+}
+
+export default function RoadmapPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const res = await fetch(`http://localhost:5225/roadmap/${slug}`, {
-    cache: "no-store",
-  });
+  const router = useRouter();
 
-  if (!res.ok) return notFound();
+  const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
 
-  const roadmap = await res.json();
-  const nodes = roadmap.nodes as RoadmapNode[];
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const res = await fetchWithAuth(
+          `http://localhost:5225/roadmap/${slug}`
+        );
+        if (!res.ok) {
+          router.push("/"); // fallback if not found
+          return;
+        }
+        const data = await res.json();
+        setRoadmapData(data);
+      } catch (error) {
+        console.error(error);
+        router.push("/"); // fallback if error
+      }
+    }
+    loadData();
+  }, [slug, router]);
 
-  const grouped = nodes.reduce((acc, node) => {
+  if (!roadmapData) {
+    return <div>Loading...</div>;
+  }
+
+  const grouped = roadmapData.nodes.reduce((acc, node) => {
     const stage = node.stage || 5;
     if (!acc[stage]) acc[stage] = [];
     acc[stage].push(node);
@@ -33,7 +58,9 @@ export default async function RoadmapPage({
   return (
     <ProtectedPage>
       <div className="p-6 max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 capitalize">{roadmap.title}</h1>
+        <h1 className="text-3xl font-bold mb-8 capitalize">
+          {roadmapData.title}
+        </h1>
         {Object.entries(grouped)
           .sort(([a], [b]) => Number(a) - Number(b))
           .map(([stage, items]) => (

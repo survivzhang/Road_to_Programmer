@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens; //  To validate JWT signature
 using System.Text; //  To handle secret key encoding
 using System.IdentityModel.Tokens.Jwt; //  To generate JWT tokens
 using System.Security.Claims; //  To store user identity in JWT
+using Microsoft.AspNetCore.Authorization;
 
 var key = "RoadToProgrammingSuperStrongSecretKey2024!@#"; //  Secret key for JWT token generation and validation
 var builder = WebApplication.CreateBuilder(args);
@@ -105,7 +106,7 @@ app.MapPost("/login", async (User LoginData, RtpContext db) =>
     return Results.Ok(new { token = tokenString });
 });
 
-app.MapGet("/roadmap/{name}", async (string name) =>
+app.MapGet("/roadmap/{name}", [Authorize] async (string name) =>
 {
     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "roadmap", $"{name}.json");
         if (!System.IO.File.Exists(filePath))

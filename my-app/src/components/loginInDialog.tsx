@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function LoginInDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,21 +50,26 @@ export function LoginInDialog() {
 
       if (response.ok) {
         // Handle successful login
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
         console.log("Login successful");
-        alert("Login successful");
+        toast.success("Login successful!");
         setIsOpen(false);
       } else if (response.status === 401) {
         // Handle error response
         console.error("Login failed");
         setError("Invalid email or password");
+        toast.error("Invalid email or password");
       } else {
         // Handle other error responses
         console.error("Login failed");
         setError("Login failed. Please try again.");
+        toast.error("Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
       setError("An error occurred. Please try again later.");
+      toast.error("An unexpected error occurred.");
     }
   };
 
