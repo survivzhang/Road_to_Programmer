@@ -163,7 +163,48 @@ app.MapGet("/ai/my-plans", [Authorize] async (HttpContext http, RtpContext db) =
         .OrderByDescending(p => p.CreatedAt)
         .ToListAsync();
 
-    return Results.Ok(plans);
+    var response = plans.Select(plan => new PlanResponse
+    {
+        PlanId = plan.PlanId,
+        CreatedAt = plan.CreatedAt,
+        Plan = System.Text.Json.JsonSerializer.Deserialize<List<PlanWeek>>(plan.PlanData) ?? new List<PlanWeek>()
+    }).ToList();
+
+    return Results.Ok(response);
+});
+
+app.MapDelete("/ai/plan/{planId}", [Authorize] async (string planId, HttpContext http, RtpContext db) =>
+{
+    var email = http.User.Identity?.Name;
+    Console.WriteLine($"Delete request for planId: {planId} by user: {email}");
+
+    if (string.IsNullOrEmpty(email))
+    {
+        Console.WriteLine("Unauthorized: No email in token");
+        return Results.Unauthorized();
+    }
+
+    // Log all available plans for this user to help debug
+    var userPlans = await db.Plans
+        .Where(p => p.Email == email)
+        .ToListAsync();
+    
+    Console.WriteLine($"User has {userPlans.Count} plans. Plan IDs: {string.Join(", ", userPlans.Select(p => p.PlanId))}");
+
+    var plan = await db.Plans.FirstOrDefaultAsync(p => p.PlanId == planId && p.Email == email);
+    
+    if (plan == null)
+    {
+        Console.WriteLine($"Plan not found. PlanId: {planId}, User: {email}");
+        return Results.NotFound($"Plan with ID {planId} not found or you don't have permission to delete it.");
+    }
+
+    Console.WriteLine($"Deleting plan. Id: {plan.Id}, PlanId: {plan.PlanId}");
+    db.Plans.Remove(plan);
+    await db.SaveChangesAsync();
+    Console.WriteLine("Plan deleted successfully");
+
+    return Results.Ok(new { message = "Plan deleted successfully" });
 });
 
 app.Run();
