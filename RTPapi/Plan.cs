@@ -22,14 +22,14 @@ namespace RTPapi
     {
         public string PlanId { get; set; } = string.Empty; // 计划ID
         public DateTime CreatedAt { get; set; } // 创建时间
-        public List<PlanStage> Plan { get; set; } = new(); // 返回的计划内容
+        public List<PlanWeek> Plan { get; set; } = new(); // 返回的计划内容
     }
 
     // 学习计划里的每一个小阶段
-    public class PlanStage
+    public class PlanWeek
     {
-        public int Stage { get; set; } // 阶段数（第1阶段、第2阶段……）
-        public string Skill { get; set; } = string.Empty; // 技能名字
-        public int Hours { get; set; } // 预计花费的时间
+        public int Week { get; set; }
+        public string Topic { get; set; }
+        public int Hours { get; set; }
     }
 }

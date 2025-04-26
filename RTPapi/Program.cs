@@ -115,13 +115,13 @@ app.MapPost("/ai/generate-plan", [Authorize] async (PlanRequest request, RtpCont
     var planId = $"plan-{sanitizedEmail}-{DateTime.UtcNow:yyyyMMddHHmmss}";
 
     // Mock生成学习计划内容
-    var planContent = new List<PlanStage>
-    {
-        new PlanStage { Stage = 1, Skill = "HTML Basics", Hours = 10 },
-        new PlanStage { Stage = 2, Skill = "CSS Basics", Hours = 15 },
-        new PlanStage { Stage = 3, Skill = "JavaScript Fundamentals", Hours = 20 },
-        new PlanStage { Stage = 4, Skill = "React Introduction", Hours = 25 }
-    };
+    var planContent = new List<PlanWeek>
+{
+    new PlanWeek { Week = 1, Topic = "HTML Basics", Hours = 10 },
+    new PlanWeek { Week = 2, Topic = "CSS Basics", Hours = 15 },
+    new PlanWeek { Week = 3, Topic = "JavaScript Fundamentals", Hours = 20 },
+    new PlanWeek { Week = 4, Topic = "React Introduction", Hours = 25 }
+};
 
     // 把学习计划内容序列化成JSON字符串
     var planDataJson = System.Text.Json.JsonSerializer.Serialize(planContent);
@@ -147,6 +147,23 @@ app.MapPost("/ai/generate-plan", [Authorize] async (PlanRequest request, RtpCont
     };
 
     return Results.Ok(response);
+});
+
+app.MapGet("/ai/my-plans", [Authorize] async (HttpContext http, RtpContext db) =>
+{
+    var email = http.User.Identity?.Name;
+
+    if (string.IsNullOrEmpty(email))
+    {
+        return Results.Unauthorized();
+    }
+
+    var plans = await db.Plans
+        .Where(p => p.Email == email)
+        .OrderByDescending(p => p.CreatedAt)
+        .ToListAsync();
+
+    return Results.Ok(plans);
 });
 
 app.Run();
