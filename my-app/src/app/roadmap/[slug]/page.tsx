@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { RoadmapCard } from "@/components/roadmap-card";
 import ProtectedPage from "@/components/protectedPage";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import React, { use } from "react";
 
 interface RoadmapNode {
   label: string;
@@ -19,7 +20,7 @@ interface RoadmapData {
 }
 
 export default function RoadmapPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+  const { slug } = React.use(params);
   const router = useRouter();
 
   const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
