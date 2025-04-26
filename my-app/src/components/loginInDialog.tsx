@@ -13,13 +13,14 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export function LoginInDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const { login } = useAuth();
   const handleOpenInNewTab = () => {
     setIsOpen(false);
   };
@@ -52,7 +53,7 @@ export function LoginInDialog() {
         // Handle successful login
         const data = await response.json();
         localStorage.setItem("token", data.token);
-        console.log("Login successful");
+        login(data.token); // Pass the token to the login function
         toast.success("Login successful!");
         setIsOpen(false);
       } else if (response.status === 401) {
@@ -86,7 +87,14 @@ export function LoginInDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button onClick={() => setIsOpen(true)}>Login</Button>
+        <Button
+          onClick={() => {
+            setIsOpen(true);
+            setError(""); // 清除之前的错误消息
+          }}
+        >
+          Login
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className="items-center text-center">

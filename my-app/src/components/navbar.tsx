@@ -10,15 +10,12 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { LoginInDialog } from "./loginInDialog";
+import { useAuth } from "@/context/AuthContext";
 
 const navItemStyle = "px-3 py-1.5 rounded-md hover:bg-[var(--accent)]";
 
 export function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
-  }, []);
+  const { isLoggedIn } = useAuth();
 
   return (
     <div className="flex justify-between items-center p-2 shadow-md bg-[var(--secondary)] text-[var(--secondary-foreground)]">

@@ -19,8 +19,13 @@ interface RoadmapData {
   nodes: RoadmapNode[];
 }
 
-export default function RoadmapPage({ params }: { params: { slug: string } }) {
-  const { slug } = React.use(params);
+export default function RoadmapPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const unwrappedParams = use(params);
+  const { slug } = unwrappedParams;
   const router = useRouter();
 
   const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);

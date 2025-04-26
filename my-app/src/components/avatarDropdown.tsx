@@ -7,12 +7,15 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/context/AuthContext";
 
 export function AvatarDropDown() {
   const router = useRouter();
+  const { logout } = useAuth();
+
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear token
-    router.push("/"); // Redirect to homepage
+    logout(); // 使用AuthContext的logout方法，它会移除token并更新登录状态
+    router.push("/"); // 重定向到首页
   };
 
   return (

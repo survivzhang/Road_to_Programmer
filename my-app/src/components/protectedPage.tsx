@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProtectedPage({
   children,
@@ -8,16 +9,14 @@ export default function ProtectedPage({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    if (!isLoggedIn) {
       router.push("/");
-    } else {
-      setIsAuthenticated(true);
     }
-  }, []);
-  if (!isAuthenticated) return null; // or a loading spinner
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) return null; // or a loading spinner
   return <>{children}</>;
 }
