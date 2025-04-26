@@ -6,7 +6,7 @@ using System.Text; //  To handle secret key encoding
 using System.IdentityModel.Tokens.Jwt; //  To generate JWT tokens
 using System.Security.Claims; //  To store user identity in JWT
 
-var key = "RoadToProgramming"; //  Secret key for JWT token generation and validation
+var key = "RoadToProgrammingSuperStrongSecretKey2024!@#"; //  Secret key for JWT token generation and validation
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -31,6 +31,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
     };
 });
+builder.Services.AddAuthorization();
 var app = builder.Build();
 app.UseCors(policy =>
     policy.AllowAnyOrigin()
@@ -63,11 +64,24 @@ app.MapPost("/user", async (User user, RtpContext db) =>
     return Results.Ok(user);
 });
 
+
 app.MapPost("/login", async (User LoginData, RtpContext db) =>
 {
+    Console.WriteLine($"Login Try: {LoginData.Email} / {LoginData.Password}");
+
     var existingUser = await db.Users.FirstOrDefaultAsync(u => u.Email == LoginData.Email);
-    if (existingUser == null || existingUser.Password != LoginData.Password)
+
+    if (existingUser == null)
     {
+        Console.WriteLine("User not found!");
+        return Results.Unauthorized();
+    }
+
+    Console.WriteLine($"DB User: {existingUser.Email} / {existingUser.Password}");
+
+    if (existingUser.Password != LoginData.Password)
+    {
+        Console.WriteLine("Password mismatch!");
         return Results.Unauthorized();
     }
 
@@ -86,9 +100,10 @@ app.MapPost("/login", async (User LoginData, RtpContext db) =>
     var token = tokenHandler.CreateToken(tokenDescriptor);
     var tokenString = tokenHandler.WriteToken(token);
 
+    Console.WriteLine("Login Success!");
+
     return Results.Ok(new { token = tokenString });
 });
-
 
 app.MapGet("/roadmap/{name}", async (string name) =>
 {

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { RoadmapCard } from "@/components/roadmap-card";
-
+import ProtectedPage from "@/components/protectedPage";
 interface RoadmapNode {
   label: string;
   description: string;
@@ -31,25 +31,27 @@ export default async function RoadmapPage({
   }, {} as Record<number, RoadmapNode[]>);
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 capitalize">{roadmap.title}</h1>
-      {Object.entries(grouped)
-        .sort(([a], [b]) => Number(a) - Number(b))
-        .map(([stage, items]) => (
-          <div key={stage} className="mb-10">
-            <h2 className="text-2xl font-semibold mb-4">Stage {stage}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {items.map((node, index) => (
-                <RoadmapCard
-                  key={index}
-                  label={node.label}
-                  description={node.description}
-                  url={node.url}
-                />
-              ))}
+    <ProtectedPage>
+      <div className="p-6 max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 capitalize">{roadmap.title}</h1>
+        {Object.entries(grouped)
+          .sort(([a], [b]) => Number(a) - Number(b))
+          .map(([stage, items]) => (
+            <div key={stage} className="mb-10">
+              <h2 className="text-2xl font-semibold mb-4">Stage {stage}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {items.map((node, index) => (
+                  <RoadmapCard
+                    key={index}
+                    label={node.label}
+                    description={node.description}
+                    url={node.url}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-    </div>
+          ))}
+      </div>
+    </ProtectedPage>
   );
 }

@@ -135,3 +135,11 @@
 /Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/roadmap/data-analyst.json
 /Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/roadmap/frontend.json
 /Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/roadmap/full-stack.json
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/survivmac/Desktop/PROJECT/Road_to_Programmer/RTPapi/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
