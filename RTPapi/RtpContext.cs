@@ -9,5 +9,6 @@ namespace RTPapi
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Plan> Plans { get; set; }
   }
 }

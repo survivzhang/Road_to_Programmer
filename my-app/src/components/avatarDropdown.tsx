@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuItem,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
 
@@ -27,6 +28,13 @@ export function AvatarDropDown() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40">
+        <DropdownMenuItem onClick={() => router.push("/ai")}>
+          AI Advice
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push("/myplans")}>
+          My Plans
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

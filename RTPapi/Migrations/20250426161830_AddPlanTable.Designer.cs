@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RTPapi;
@@ -11,9 +12,11 @@ using RTPapi;
 namespace RTPapi.Migrations
 {
     [DbContext(typeof(RtpContext))]
-    partial class RtpContextModelSnapshot : ModelSnapshot
+    [Migration("20250426161830_AddPlanTable")]
+    partial class AddPlanTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

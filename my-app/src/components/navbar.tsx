@@ -31,11 +31,13 @@ export function Navbar() {
               <Link href="/ai">AI Advice</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navItemStyle}>
-              <Link href="#">Plan</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+          {isLoggedIn && (
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navItemStyle}>
+                <Link href="/myplans">My Plans</Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          )}
         </NavigationMenuList>
       </NavigationMenu>
 

@@ -20,6 +20,7 @@ export default function AIPage() {
   const [targetLevel, setTargetLevel] = useState("");
   const [hoursPerWeek, setHoursPerWeek] = useState("");
   const [customRequirements, setCustomRequirements] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!isLoggedIn || !user) {
@@ -33,42 +34,58 @@ export default function AIPage() {
     }
 
     const planDescription = `
-      I want to become a ${targetLevel} ${
+    I want to become a ${targetLevel} ${
       roadmapGoals.find((g) => g.value === goal)?.label || goal
     },
-      studying ${hoursPerWeek} hours per week.
-      Current level: ${level}.
-      ${
-        customRequirements
-          ? "Additional requirements: " + customRequirements
-          : ""
-      }
-    `.trim();
+    studying ${hoursPerWeek} hours per week.
+    Current level: ${level}.
+    ${
+      customRequirements ? "Additional requirements: " + customRequirements : ""
+    }
+  `.trim();
+
+    setIsLoading(true);
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found. Please login again.");
+      }
+
       const response = await fetch("http://localhost:5225/ai/generate-plan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          email: user?.email,
-          planDescription,
+          email: user.email,
+          planDescription: planDescription,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate plan");
+        const errorText = await response.text();
+        console.error("Server responded with:", response.status, errorText);
+        throw new Error(`Failed to create plan: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Generated Plan:", data);
-      toast.success("Plan generated successfully!");
+      console.log("Plan created successfully:", data);
+      toast.success("Plan created successfully!");
 
-      // 后面可以跳转到Plan页面显示计划
+      // 🟰 保存到localStorage（非常重要！）
+      localStorage.setItem("latestPlan", JSON.stringify(data));
+
+      // 🟰 再跳转到MyPlans页面
+      router.push("/myplans");
     } catch (error) {
-      console.error(error);
-      toast.error("Error generating plan.");
+      console.error("Error creating plan:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create plan"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -131,8 +148,8 @@ export default function AIPage() {
           placeholder="Any specific requirements or focuses?"
         />
 
-        <Button className="w-full" onClick={handleSubmit}>
-          Generate AI Plan
+        <Button className="w-full" onClick={handleSubmit} disabled={isLoading}>
+          {isLoading ? "Creating Plan..." : "Generate Learning Plan"}
         </Button>
       </div>
     </div>
