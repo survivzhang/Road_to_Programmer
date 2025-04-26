@@ -28,7 +28,7 @@ export function Navbar() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navItemStyle}>
-              <Link href="#">AI Advice</Link>
+              <Link href="/ai">AI Advice</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>

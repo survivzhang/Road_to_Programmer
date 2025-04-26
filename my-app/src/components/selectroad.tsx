@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-
+import { roadmapGoals, RoadmapGoal } from "@/constants/roadmapGoals";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,14 +62,11 @@ export function SelectRoad() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent className="max-h-[300px] overflow-y-auto">
-                  <SelectItem value="frontend">Frontend Developer</SelectItem>
-                  <SelectItem value="backend">Backend Developer</SelectItem>
-                  <SelectItem value="ai-engineer">AI Engineer</SelectItem>
-                  <SelectItem value="cyber-security">Cyber Security</SelectItem>
-                  <SelectItem value="data-analyst">Data Analyst</SelectItem>
-                  <SelectItem value="full-stack">
-                    Full Stack Engineer
-                  </SelectItem>
+                  {roadmapGoals.map((goal: RoadmapGoal) => (
+                    <SelectItem key={goal.value} value={goal.value}>
+                      {goal.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormDescription>
