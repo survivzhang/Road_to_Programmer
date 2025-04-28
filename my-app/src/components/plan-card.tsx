@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface PlanWeek {
+  id: string; // ➡️ step-1, step-2, step-3
   week: number;
   topic: string;
   hours: number;
@@ -74,36 +75,31 @@ export function PlanCard({
       updatedWeeks[index].isCompleted = !updatedWeeks[index].isCompleted;
       setWeeks(updatedWeeks);
 
-      if (onToggleComplete) {
-        onToggleComplete(planId, index, updatedWeeks[index].isCompleted);
-      } else {
-        // If no onToggleComplete callback is provided, we can implement a default behavior
-        // This would call your backend API to update the progress
-        const token = localStorage.getItem("token");
-        if (!token) {
-          toast.error("You need to be logged in to track progress");
-          return;
-        }
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("You need to be logged in to track progress");
+        return;
+      }
 
-        // Example API call (implement according to your backend)
-        const response = await fetch(`/ai/plan/${planId}/progress`, {
-          method: "POST",
+      const response = await fetch(
+        `http://localhost:5225/ai/plan/${planId}/week/${updatedWeeks[index].id}`,
+        {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            weekIndex: index,
             isCompleted: updatedWeeks[index].isCompleted,
           }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update progress");
         }
+      );
 
-        toast.success("Progress updated successfully");
+      if (!response.ok) {
+        throw new Error("Failed to update progress");
       }
+
+      toast.success("Progress updated successfully");
     } catch (error) {
       console.error("Error updating progress:", error);
       toast.error("Failed to update progress");
@@ -150,6 +146,7 @@ export function PlanCard({
               <div className="space-y-4">
                 <h3 className="font-semibold">Learning Plan</h3>
                 <div className="grid grid-cols-4 gap-2 font-semibold text-sm border-b pb-2">
+                  <div>ID</div>
                   <div>Week</div>
                   <div>Topic</div>
                   <div>Hours</div>
@@ -160,6 +157,7 @@ export function PlanCard({
                     key={index}
                     className="grid grid-cols-4 gap-2 text-sm border-b pb-2 items-center"
                   >
+                    <div className="font-bold">{week.id}</div>
                     <div>Week {week.week}</div>
                     <div
                       className={

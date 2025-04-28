@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RTPapi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a0c224fee9d8a236e10e19ba5aae1006d539e15")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce503c32c8d3ad62a901ea28bbdad19f1625e453")]
 [assembly: System.Reflection.AssemblyProductAttribute("RTPapi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RTPapi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

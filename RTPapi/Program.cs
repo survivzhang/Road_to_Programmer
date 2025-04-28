@@ -293,23 +293,33 @@ A week can have multiple topics, All topics should be related to the user's goal
         var sanitizedEmail = request.Email.Replace("@", "-at-").Replace(".", "-dot-");
         var planId = $"plan-{sanitizedEmail}-{DateTime.UtcNow:yyyyMMddHHmmss}";
         
+
+        // Deserialize to generate List<PlanWeek>
+        var parsedPlanWeeks = JsonSerializer.Deserialize<List<PlanWeek>>(generatedContent) ?? new List<PlanWeek>();
+        // 在反序列化和补充字段后
+        for (int i = 0; i < parsedPlanWeeks.Count; i++)
+        {
+            parsedPlanWeeks[i].Id = $"step-{i + 1}";
+            parsedPlanWeeks[i].IsCompleted = false;
+        }
+
+        // 🔥 新增
+        var processedPlanData = JsonSerializer.Serialize(parsedPlanWeeks);
+
+        // 保存到数据库的
         var newPlan = new Plan
         {
             PlanId = planId,
             Email = request.Email,
             CreatedAt = DateTime.UtcNow,
-            PlanData = generatedContent // 🔥 Directly save the standard JSON returned by OpenAI
+            PlanData = processedPlanData // 这里保存加工后的JSON
         };
 
         db.Plans.Add(newPlan);
         await db.SaveChangesAsync();
 
-        // Deserialize to generate List<PlanWeek>
-        var parsedPlanWeeks = JsonSerializer.Deserialize<List<PlanWeek>>(generatedContent) ?? new List<PlanWeek>();
-        foreach (var week in parsedPlanWeeks)
-        {
-            week.IsCompleted = false; // 🔥 Set completed to false for every generated week
-        }
+        
+
         var planResponse = new PlanResponse
         {
             PlanId = planId,
@@ -383,6 +393,31 @@ app.MapDelete("/ai/plan/{planId}", [Authorize] async (string planId, HttpContext
     return Results.Ok(new { message = "Plan deleted successfully" });
 });
 
+
+// 新增 PUT 接口
+app.MapPut("/ai/plan/{planId}/week/{weekId}", [Authorize] async (string planId, string weekId, UpdateWeekRequest request, HttpContext http, RtpContext db) =>
+{
+    var email = http.User.Identity?.Name;
+    if (string.IsNullOrEmpty(email))
+        return Results.Unauthorized();
+
+    var plan = await db.Plans.FirstOrDefaultAsync(p => p.PlanId == planId && p.Email == email);
+    if (plan == null)
+        return Results.NotFound("Plan not found");
+
+    var planWeeks = JsonSerializer.Deserialize<List<PlanWeek>>(plan.PlanData) ?? new List<PlanWeek>();
+
+    var week = planWeeks.FirstOrDefault(w => w.Id == weekId);
+    if (week == null)
+        return Results.NotFound("Step not found");
+
+    week.IsCompleted = request.IsCompleted;
+
+    plan.PlanData = JsonSerializer.Serialize(planWeeks);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new { message = "Progress updated successfully" });
+});
 
 
 app.Run();

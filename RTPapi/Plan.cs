@@ -28,8 +28,14 @@ public class PlanResponse
 // Each small stage in the learning plan
 public class PlanWeek
 {
+    public string Id { get; set; } = string.Empty;   // ➡️ step-1, step-2, step-3
     public int Week { get; set; }
     public string Topic { get; set; } = string.Empty;
     public int Hours { get; set; }
-    public bool IsCompleted { get; set; } // Whether the user has completed this stage
+    public bool IsCompleted { get; set; }
+}
+
+public class UpdateWeekRequest
+{
+    public bool IsCompleted { get; set; }
 }
