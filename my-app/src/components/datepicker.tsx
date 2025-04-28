@@ -20,13 +20,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// 首先定义接口
+// First define the interface
 interface DatePickerProps {
   value?: Date;
   onChange?: (date: Date | undefined) => void;
 }
 
-// 然后导出组件
+// Then export the component
 export function DatePicker({ value, onChange }: DatePickerProps) {
   const [internalDate, setInternalDate] = React.useState<Date>();
 

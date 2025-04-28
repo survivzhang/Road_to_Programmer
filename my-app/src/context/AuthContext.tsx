@@ -8,13 +8,13 @@ import {
   ReactNode,
 } from "react";
 
-// 定义用户数据类型
+// Define user data type
 interface User {
   email: string;
-  // 可以根据需要添加更多用户字段
+  // You can add more user fields as needed
 }
 
-// 定义Context的数据类型
+// Define the Context data type
 interface AuthContextType {
   isLoggedIn: boolean;
   user: User | null;
@@ -22,15 +22,15 @@ interface AuthContextType {
   logout: () => void;
 }
 
-// 创建Context（初始值是假的）
+// Create Context (initial value is false)
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// 提供器组件
+// Provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-  // 页面加载时从localStorage检查登录状态和用户信息
+  // Check login status and user information from localStorage when page loads
   useEffect(() => {
     const token = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// 自定义hook
+// Custom hook
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

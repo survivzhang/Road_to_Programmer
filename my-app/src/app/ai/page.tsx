@@ -74,10 +74,10 @@ export default function AIPage() {
       console.log("Plan created successfully:", data);
       toast.success("Plan created successfully!");
 
-      // 🟰 保存到localStorage（非常重要！）
+      // 🟰 Save to localStorage (very important!)
       localStorage.setItem("latestPlan", JSON.stringify(data));
 
-      // 🟰 再跳转到MyPlans页面
+      // 🟰 Then redirect to MyPlans page
       router.push("/myplans");
     } catch (error) {
       console.error("Error creating plan:", error);

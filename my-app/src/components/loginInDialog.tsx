@@ -52,12 +52,12 @@ export function LoginInDialog() {
       if (response.ok) {
         // Handle successful login
         const data = await response.json();
-        // 从响应中获取用户信息
+        // Get user information from response
         const userData = {
           email: email,
-          // 如果API返回其他用户信息，可以在这里添加
+          // If API returns other user information, it can be added here
         };
-        // 传递token和用户数据给login函数
+        // Pass token and user data to login function
         login(data.token, userData);
         toast.success("Login successful!");
         setIsOpen(false);

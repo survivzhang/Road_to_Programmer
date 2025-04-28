@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// 表单校验规则
+// Form validation rules
 const formSchema = z.object({
   email: z.string().email(),
   username: z.string().min(3),
@@ -46,7 +46,7 @@ export function ProfileForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    // 这里可以进行表单提交的逻辑
+    // Form submission logic can be added here
     try {
       const response = await fetch("http://localhost:5225/user", {
         method: "POST",

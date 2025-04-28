@@ -15,8 +15,8 @@ export function AvatarDropDown() {
   const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout(); // 使用AuthContext的logout方法，它会移除token并更新登录状态
-    router.push("/"); // 重定向到首页
+    logout(); // Use the logout method from AuthContext, which will remove the token and update login status
+    router.push("/"); // Redirect to homepage
   };
 
   return (

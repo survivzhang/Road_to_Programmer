@@ -10,17 +10,17 @@ using Microsoft.Extensions.Configuration;
 
 using System.Text.Json;
 
-// 添加JWT密钥到.env文件
+// Add JWT key to .env file
 if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".env")))
 {
-    // 如果.env文件不存在，创建一个包含默认JWT密钥的文件
+    // If .env file does not exist, create one with default JWT key
     File.WriteAllText(
         Path.Combine(Directory.GetCurrentDirectory(), ".env"),
         "OPENAI_API_KEY=your_openai_api_key\nJWT_SECRET_KEY=RoadToProgrammingSuperStrongSecretKey2024!@#"
     );
 }
 
-// 尝试手动加载.env文件
+// Try to manually load .env file
 if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".env")))
 {
     var lines = File.ReadAllLines(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
@@ -36,13 +36,13 @@ if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".env")))
     }
 }
 
-// 获取JWT密钥
+// Get JWT key
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? "RoadToProgrammingSuperStrongSecretKey2024!@#";
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables()
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-// 尝试手动加载.env文件
+// Try to manually load .env file
 if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".env")))
 {
     var lines = File.ReadAllLines(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
@@ -97,7 +97,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // -------------------------- //
-// 用户相关接口
+// User-related APIs
 // -------------------------- //
 
 app.MapGet("/user", async (RtpContext db) =>
@@ -137,7 +137,7 @@ app.MapPost("/login", async (User loginData, RtpContext db) =>
 });
 
 // -------------------------- //
-// 路线图 Roadmap 接口
+// Roadmap APIs
 // -------------------------- //
 
 app.MapGet("/roadmap/{name}", [Authorize] async (string name) =>
@@ -153,7 +153,7 @@ app.MapGet("/roadmap/{name}", [Authorize] async (string name) =>
 });
 
 // -------------------------- //
-// 测试OpenAI API连接
+// Test OpenAI API Connection
 // -------------------------- //
 
 app.MapGet("/test-openai", async (IConfiguration config) =>
@@ -204,7 +204,7 @@ app.MapGet("/test-openai", async (IConfiguration config) =>
 });
 
 // -------------------------- //
-// AI生成学习计划接口
+// AI-generated Learning Plan APIs
 // -------------------------- //
 
 app.MapPost("/ai/generate-plan", [Authorize] async (PlanRequest request, RtpContext db, IConfiguration config) =>
@@ -220,7 +220,7 @@ app.MapPost("/ai/generate-plan", [Authorize] async (PlanRequest request, RtpCont
     httpClient.DefaultRequestHeaders.Authorization = 
         new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", openAiApiKey);
 
-    // System提示，让AI严格返回格式
+    // System prompt, ask AI to strictly return format
     var systemPrompt = @"
 You are a professional career coach AI.
 
@@ -289,24 +289,27 @@ A week can have multiple topics, All topics should be related to the user's goal
             return Results.Problem("OpenAI returned empty content.");
         }
 
-        // 保存到数据库
+        // Save to database
         var sanitizedEmail = request.Email.Replace("@", "-at-").Replace(".", "-dot-");
         var planId = $"plan-{sanitizedEmail}-{DateTime.UtcNow:yyyyMMddHHmmss}";
-
+        
         var newPlan = new Plan
         {
             PlanId = planId,
             Email = request.Email,
             CreatedAt = DateTime.UtcNow,
-            PlanData = generatedContent // 🔥 直接保存 OpenAI返回的标准JSON
+            PlanData = generatedContent // 🔥 Directly save the standard JSON returned by OpenAI
         };
 
         db.Plans.Add(newPlan);
         await db.SaveChangesAsync();
 
-        // 反序列化生成 List<PlanWeek>
+        // Deserialize to generate List<PlanWeek>
         var parsedPlanWeeks = JsonSerializer.Deserialize<List<PlanWeek>>(generatedContent) ?? new List<PlanWeek>();
-
+        foreach (var week in parsedPlanWeeks)
+        {
+            week.IsCompleted = false; // 🔥 Set completed to false for every generated week
+        }
         var planResponse = new PlanResponse
         {
             PlanId = planId,
@@ -379,5 +382,7 @@ app.MapDelete("/ai/plan/{planId}", [Authorize] async (string planId, HttpContext
 
     return Results.Ok(new { message = "Plan deleted successfully" });
 });
+
+
 
 app.Run();
